@@ -6,12 +6,12 @@ from src.books.schemas import Book, CreateBook, UpdateBook
 router = APIRouter()
 
 
-@router.get("/books", response_model=list[Book])
+@router.get("/", response_model=list[Book])
 def get_all_books():
     return books
 
 
-@router.post("/book", status_code=status.HTTP_201_CREATED, response_model=Book)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=Book)
 def create_book(create: CreateBook):
     max_id = 0
     for book in books:
@@ -27,7 +27,16 @@ def create_book(create: CreateBook):
     return new_book
 
 
-@router.patch("/book/{book_id}", response_model=Book)
+@router.get("/{book_id}", response_model=Book)
+def get_book(book_id: int):
+    for book in books:
+        if book["id"] == book_id:
+            return book
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
+
+
+@router.patch("/{book_id}", response_model=Book)
 def update_book(book_id: int, update: UpdateBook):
     # 1. Find the book
     for index, book in enumerate(books):
@@ -48,7 +57,7 @@ def update_book(book_id: int, update: UpdateBook):
     raise HTTPException(status_code=404, detail="Book not found.")
 
 
-@router.delete("/book/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_book(book_id: int):
     # 1. Loop through the list using the index (0, 1, 2...)
     for index in range(len(books)):
