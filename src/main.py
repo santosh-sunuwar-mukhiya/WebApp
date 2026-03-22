@@ -8,7 +8,7 @@ app = FastAPI(
     title="Bookly API",
 )
 
-app.include_router(routes.router)
+app.include_router(routes.router, prefix="/book")
 
 
 @app.get("/scalar", include_in_schema=False)
